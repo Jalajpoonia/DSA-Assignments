@@ -1,0 +1,148 @@
+#include <iostream>
+using namespace std;
+
+void print(const vector<int>& a) {
+    for (int x : a) cout << x << " ";
+    cout << "\n";
+}
+
+// 1.a Selection Sort
+void selectionSort(vector<int>& a) {
+    int n = (int)a.size();
+    for (int i = 0; i < n - 1; i++) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (a[j] < a[min]) min = j;
+        }
+        swap(a[i], a[min]);
+    }
+}
+
+// 1.b Insertion Sort 
+void insertionSort(vector<int>& a) {
+    int n = (int)a.size();
+    for (int i = 1; i < n; i++) {
+        int key = a[i];
+        int j = i - 1;
+        while (j >= 0 && a[j] > key) {
+            a[j + 1] = a[j];
+            j--;
+        }
+        a[j + 1] = key;
+    }
+}
+
+// 1.c Bubble Sort 
+void bubbleSort(vector<int>& a) {
+    int n = (int)a.size();
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < n - 1 - i; j++) {
+            if (a[j] > a[j + 1]) {
+                swap(a[j], a[j + 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+    }
+}
+
+// 1.d Merge Sort 
+void mergeVec(vector<int>& a, int l, int m, int r) {
+    int n1 = m - l + 1, n2 = r - m;
+    vector<int> L(n1), R(n2);
+    for (int i = 0; i < n1; i++) L[i] = a[l + i];
+    for (int j = 0; j < n2; j++) R[j] = a[m + 1 + j];
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) a[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];
+    while (i < n1) a[k++] = L[i++];
+    while (j < n2) a[k++] = R[j++];
+}
+void mergeSort(vector<int>& a, int l, int r) {
+    if (l >= r) return;
+    int m = l + (r - l) / 2;
+    mergesort(a, l, m);
+    mergeSort(a, m + 1, r);
+    mergeVec(a, l, m, r);
+}
+void mergeSort(vector<int>& a) {
+    if (!a.empty()) mergeSort(a, 0, (int)a.size() - 1);
+}
+
+// 1.e Quick Sort 
+int partition(vector<int>& a, int l, int r) {
+    int pivot = a[r];
+    int i = l;
+    for (int j = l; j < r; j++) {
+        if (a[j] <= pivot) {
+            swap(a[i], a[j]);
+            i++;
+        }
+    }
+    swap(a[i], a[r]);
+    return i;
+}
+void quickSort(vector<int>& a, int l, int r) {
+    if (l >= r) return;
+    int p = partition(a, l, r);
+    quickSort(a, l, p - 1);
+    quickSort(a, p + 1, r);
+}
+void quickSort(vector<int>& a) {
+    if (!a.empty()) quickSortRec(a, 0, (int)a.size() - 1);
+}
+
+// 2. Improved Selection Sort 
+void selectionSortMinMax(vector<int>& a) {
+    int left = 0, right = (int)a.size() - 1;
+    while (left < right) {
+        int minIdx = left, maxIdx = right;
+        for (int i = left; i <= right; i++) {
+            if (a[i] < a[minIdx]) minIdx = i;
+            if (a[i] > a[maxIdx]) maxIdx = i;
+        }
+        // Place min at 'left'
+        swap(a[left], a[minIdx]);
+        // If max was at 'left', it moved to 'minIdx'
+        if (maxIdx == left) maxIdx = minIdx;
+        // Place max at 'right'
+        swap(a[right], a[maxIdx]);
+        left++;
+        right--;
+    }
+}
+
+int main() {
+   
+
+    int n;
+    cout << "Enter n: ";
+    if (!(cin >> n)) return 0;
+    vector<int> a(n);
+    cout << "Enter " << n << " elements:\n";
+    for (int i = 0; i < n; i++) cin >> a[i];
+
+    vector<int> b;
+
+    b = a; selectionSort(b);
+    cout << "Selection: ";
+    print(b);
+
+    b = a; insertionSort(b);
+    cout << "Insertion: ";
+    print(b);
+
+    b = a; bubbleSort(b); 
+    cout << "Bubble:    ";
+    print(b);
+    
+    b = a; mergeSort(b);
+    cout << "Merge:     ";
+    print(b);
+
+    b = a; quickSort(b);     cout << "Quick:     "; print(b);
+    b = a; selectionSortMinMax(b); cout << "Sel MinMax:"; print(b);
+
+    return 0;
+}
+
